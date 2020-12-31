@@ -49,3 +49,17 @@ export const getConfig = async (name, version) => {
       //body: JSON.stringify({})
     });
 };
+
+export const saveConfig = async (config) => {
+  const token = localStorage.getItem('swaggerApiToken');
+  return fetch(
+    'https://l5ov8zep98.execute-api.us-west-2.amazonaws.com/api/config',
+    {
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': token
+      },
+      body: JSON.stringify(config)
+    });
+};

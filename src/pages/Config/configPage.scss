@@ -1,7 +1,37 @@
 .config-page{
 
-  textarea{
-    width: 100%;
+
+  .input-group{
+    font-family: "Courier New", monospace;
+    .input-group-prepend{
+      .input-group-text{
+        flex-direction: column;
+        padding-bottom: 23px;
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+      }
+    }
+    textarea{
+      overflow-x: auto;
+      resize: none;
+    }
+  }
+
+
+
+
+
+
+  .button-container{
+    margin-top: 10px;
+    display: flex;
+    justify-content: space-evenly;
+  }
+
+  .index-column{
+
+    display: inline;
+
   }
 
 }

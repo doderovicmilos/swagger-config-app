@@ -9,6 +9,29 @@
         padding-bottom: 23px;
         border-top-right-radius: 0;
         border-bottom-right-radius: 0;
+        span{
+          width:30px;
+          display: inline-block;
+          pointer-events: none;
+        }
+        button{
+          margin: 0;
+          padding: 0;
+          font-size: 1em;
+          line-height: initial;
+          .bi-cissors{
+            svg{
+              width: 0.8em;
+              height: 0.8em;
+              vertical-align: -2px;
+              margin: 0 10px;
+            }
+          }
+        }
+        button:disabled{
+          opacity: .2;
+        }
+
       }
     }
     textarea{
@@ -16,9 +39,6 @@
       resize: none;
     }
   }
-
-
-
 
 
 

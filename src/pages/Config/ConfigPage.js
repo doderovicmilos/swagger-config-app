@@ -80,15 +80,16 @@ const ConfigPage = (props) => {
   const handlePasteClick = (e) => {
     const lines = textAreaRef.current.value.split("\n");
     const clickedLineNumber = parseInt(e.target.parentNode.getAttribute("value"));
-    const lineToInsert = lines[clickedLineNumber + 1].trim().charAt(0) === '}' ? ',' + extractedConfigString : extractedConfigString + ',';
+    console.log(lines[clickedLineNumber + 1].trim());
+    const lineToInsert = lines[clickedLineNumber + 1].trim().charAt(0) === '}' || lines[clickedLineNumber + 1].trim().charAt(0) === ']' ? ',' + extractedConfigString : extractedConfigString + ',';
     lines.splice(clickedLineNumber + 1, 0, lineToInsert);
     const newValueString = lines.join("\n");
     setExtractedConfigString(null);
 
     setConfigString(newValueString);
 
-    // const newValue = JSON.parse(newValueString);
-    // setConfigString(JSON.stringify(newValue, undefined, 3));
+    const newValue = JSON.parse(newValueString);
+    setConfigString(JSON.stringify(newValue, undefined, 3));
 
 
 
@@ -99,7 +100,7 @@ const ConfigPage = (props) => {
   const canCut = (index) => {
     const lines = configString.split('\n');
     //clipboard is empty and attribute is named
-    return extractedConfigString !== null || ( lines[index] && !lines[index].match(/"(.*?)":/));
+    return extractedConfigString === null && ( lines[index] && lines[index].match(/"(.*?)":/) || lines[index] && lines[index].trim() === '{' );
   }
 
   const enablePaste = (index) => {
@@ -114,7 +115,7 @@ const ConfigPage = (props) => {
       lines[index] && lines[index+1].trim() === ']');
 
 
-    console.log(extractedConfigString && extractedConfigString.split('\n') && extractedConfigString.split('\n')[0] && extractedConfigString.split('\n')[0]);
+    //console.log(extractedConfigString && extractedConfigString.split('\n') && extractedConfigString.split('\n')[0] && extractedConfigString.split('\n')[0]);
 
     //if extracted segment is unnamed
     if  (extractedConfigString && extractedConfigString.split('\n') && extractedConfigString.split('\n')[0] && extractedConfigString.split('\n')[0].trim() === '{') return insideArray;
@@ -143,7 +144,7 @@ const ConfigPage = (props) => {
                     <span>{index}</span>
                     <button className="btn btn-outline-primary btn-sm"
                             onClick={handleCutClick}
-                            //disabled={ canCut(index) }
+                            disabled={ !canCut(index) }
                     >
                       <CutIcon/>
                     </button>

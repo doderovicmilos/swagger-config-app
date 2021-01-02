@@ -69,7 +69,7 @@ const ConfigPage = (props) => {
     //removes trailing comma from extracted segment
     if(segmentString.slice(-1)===',') segmentString = segmentString.slice(0, -1);
     //removes trailing comma after previous element if element that was removed was last
-    else lines[clickedLineNumber-1]=lines[clickedLineNumber-1].slice(0, -1);
+    else if(lines[clickedLineNumber-1].slice(-1)===',') lines[clickedLineNumber-1]=lines[clickedLineNumber-1].slice(0, -1);
     //joins rest of lines without extracted segment
     configStringNewValue = lines.join('\n');
 
@@ -97,7 +97,7 @@ const ConfigPage = (props) => {
 
   //const isAttributeLine =
 
-  const canCut = (index) => {
+  const enableCut = (index) => {
     const lines = configString.split('\n');
     //clipboard is empty and attribute is named
     return extractedConfigString === null && ( lines[index] && lines[index].match(/"(.*?)":/) || lines[index] && lines[index].trim() === '{' );
@@ -144,7 +144,7 @@ const ConfigPage = (props) => {
                     <span>{index}</span>
                     <button className="btn btn-outline-primary btn-sm"
                             onClick={handleCutClick}
-                            disabled={ !canCut(index) }
+                            disabled={ !enableCut(index) }
                     >
                       <CutIcon/>
                     </button>

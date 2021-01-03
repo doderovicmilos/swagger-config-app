@@ -73,7 +73,7 @@ const ConfigPage = (props) => {
     }
 
     const newValueString = lines.join("\n");
-    setExtractedConfigString(null);
+    //setExtractedConfigString(null);
     setConfigString(formatConfig(newValueString));
   }
 

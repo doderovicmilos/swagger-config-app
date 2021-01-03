@@ -4,6 +4,10 @@ import { useParams } from "react-router-dom";
 import './configPage.scss';
 import CutIcon from "../../components/Icons/CutIcon";
 import PasteIcon from "../../components/Icons/PasteIcon";
+import TrashIcon from "../../components/Icons/TrashIcon";
+import CopyIcon from "../../components/Icons/CopyIcon";
+import extractSegment from "./utils/extractSegment";
+
 
 const ConfigPage = (props) => {
     const parsedUrl = new URL(window.location.href);
@@ -32,9 +36,13 @@ const ConfigPage = (props) => {
   }
 
   const handleParseClick = () => {
-    const newValue = JSON.parse(textAreaRef.current.value);
-     setConfigString(JSON.stringify(newValue, undefined, 3));
+    formatConfig();
   }
+
+  const formatConfig = (configString) => {
+    const newValue = JSON.parse(configString);
+    return JSON.stringify(newValue, undefined, 3);
+  };
 
   const handleSaveClick = () => {
     const config = JSON.parse(configString);
@@ -44,38 +52,25 @@ const ConfigPage = (props) => {
       .catch(error=>console.error(error));
   }
 
+  const handleCopyClick = (e) => {
+    const lineNumber = parseInt(e.target.parentNode.getAttribute('value'));
+
+    setExtractedConfigString(extractSegment(configString, lineNumber)['extractedSegment']);
+    //setConfigString(formatConfig(extractSegment(configString, lineNumber)['newConfigValue']));
+  };
+
   const handleCutClick = (e) => {
-    const numberOfWhiteSpacesAtLineStart = (line) => line.search(/\S|$/);
-    const lines = configString.split("\n");
-    const clickedLineNumber = parseInt(e.target.parentNode.getAttribute("value"));
-    const clickedLine = configString.split("\n")[clickedLineNumber];
-    const clickedLineEndsWith = clickedLine.slice(-1);
-    let segmentString = null;
-    let configStringNewValue = null;
-    let segmentLength = 1;
+    const lineNumber = parseInt(e.target.parentNode.getAttribute('value'));
 
-    //line that contains attribute
-    if(clickedLineEndsWith === '[' || clickedLineEndsWith === '{') {
+    setExtractedConfigString(extractSegment(configString, lineNumber)['extractedSegment']);
+    setConfigString(formatConfig(extractSegment(configString, lineNumber)['newConfigValue']));
+  };
 
-      let endOfSegmentLineNumber = clickedLineNumber + 1;
-      //finds end of segment based on indentation
-      while (numberOfWhiteSpacesAtLineStart(clickedLine) !== numberOfWhiteSpacesAtLineStart(lines[endOfSegmentLineNumber])) endOfSegmentLineNumber++;
-      endOfSegmentLineNumber++;
+  const handleDeleteClick = (e) => {
+    const lineNumber = parseInt(e.target.parentNode.getAttribute('value'));
 
-      segmentLength = endOfSegmentLineNumber - clickedLineNumber;
-    }
-    //extracts segment
-    segmentString = lines.splice(clickedLineNumber, segmentLength).join('\n');
-    //removes trailing comma from extracted segment
-    if(segmentString.slice(-1)===',') segmentString = segmentString.slice(0, -1);
-    //removes trailing comma after previous element if element that was removed was last
-    else if(lines[clickedLineNumber-1].slice(-1)===',') lines[clickedLineNumber-1]=lines[clickedLineNumber-1].slice(0, -1);
-    //joins rest of lines without extracted segment
-    configStringNewValue = lines.join('\n');
-
-    setExtractedConfigString(segmentString);
-    setConfigString(configStringNewValue);
-  }
+    setConfigString(formatConfig(extractSegment(configString, lineNumber)['newConfigValue']));
+  };
 
   const handlePasteClick = (e) => {
     const lines = textAreaRef.current.value.split("\n");
@@ -86,16 +81,8 @@ const ConfigPage = (props) => {
     const newValueString = lines.join("\n");
     setExtractedConfigString(null);
 
-    setConfigString(newValueString);
-
-    const newValue = JSON.parse(newValueString);
-    setConfigString(JSON.stringify(newValue, undefined, 3));
-
-
-
+    setConfigString(formatConfig(newValueString));
   }
-
-  //const isAttributeLine =
 
   const enableCut = (index) => {
     const lines = configString.split('\n');
@@ -105,28 +92,14 @@ const ConfigPage = (props) => {
 
   const enablePaste = (index) => {
     const lines = configString.split('\n');
-
-    const insideArray = lines[index+1] && (
-      //startOfArray
-      lines[index] && lines[index].slice(-1) === '[' ||
-      //middle of array
-      lines[index] && lines[index+1].trim() === '{' ||
-      //end of array
-      lines[index] && lines[index+1].trim() === ']');
-
-
-    //console.log(extractedConfigString && extractedConfigString.split('\n') && extractedConfigString.split('\n')[0] && extractedConfigString.split('\n')[0]);
+    //                                     start of array                    middle of array                  end of array
+    const insideArray = lines[index+1] && (lines[index].slice(-1) === '[' || lines[index+1].trim() === '{' || lines[index+1].trim() === ']');
 
     //if extracted segment is unnamed
     if  (extractedConfigString && extractedConfigString.split('\n') && extractedConfigString.split('\n')[0] && extractedConfigString.split('\n')[0].trim() === '{') return insideArray;
 
     //if extracted segment is named
     else return extractedConfigString && !insideArray;
-
-    //return !insideArray;
-
-
-
   }
 
 
@@ -141,22 +114,36 @@ const ConfigPage = (props) => {
               [...Array(numberOfRows)].map(
                 (it, index) => (
                   <div key={index} value={index}>
-                    <span>{index}</span>
-                    <button className="btn btn-outline-primary btn-sm"
+
+
+                    { enableCut(index) && <button className="btn btn-outline-primary btn-sm"
+                                                  onClick={handleCopyClick}
+                    >
+                      <CopyIcon />
+                    </button> }
+
+
+                    { enableCut(index) && <button className="btn btn-outline-primary btn-sm"
                             onClick={handleCutClick}
-                            disabled={ !enableCut(index) }
                     >
                       <CutIcon/>
-                    </button>
-                    <button className="btn btn-outline-primary btn-sm"
-                            onClick={handlePasteClick}
-                            disabled={!enablePaste(index)}
+                    </button> }
+
+
+
+                    { enablePaste(index) && <button className="btn btn-outline-primary btn-sm"
+                      onClick={handlePasteClick}
                     >
-
                       <PasteIcon  />
-                    </button>
+                    </button>}
 
+                    { enableCut(index) && <button className="btn btn-outline-danger btn-sm"
+                      onClick={handleDeleteClick}
+                    >
+                      <TrashIcon />
+                    </button> }
 
+                    <span>{index}</span>
                   </div>
                 )
               )

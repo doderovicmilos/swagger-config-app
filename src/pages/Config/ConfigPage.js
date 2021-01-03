@@ -25,7 +25,7 @@ const ConfigPage = () => {
 
   const formatConfig = (configString) => {
     const newValue = JSON.parse(configString);
-    return JSON.stringify(newValue, undefined, 3);
+    return JSON.stringify(newValue, undefined, 2);
   };
 
   const handleNameChange = (e) => {
@@ -43,7 +43,7 @@ const ConfigPage = () => {
 
   const handleFormatClick = () => {
     try{
-      formatConfig(configString);
+      setConfigString(formatConfig(configString));
       setMessage("JSON is valid!")
     } catch (e){
       setError(true);

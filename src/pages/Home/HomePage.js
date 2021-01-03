@@ -6,16 +6,25 @@ import './homePage.scss'
 const Home = () => {
 
   const [configs, setConfigs] = useState([]);
+  const [message, setMessage] = useState(null);
 
   useEffect(() => {
-    getConfigs().then(response => response.json())
-      .then(response => setConfigs(response))
-      .catch(error => console.log(error));
+    if(localStorage.swaggerApiToken){
+      getConfigs().then(response => {
+        return response.json()})
+        .then(response => setConfigs(response))
+        .catch(error => console.log(error));
+    } else {
+      setMessage("Please Log in to continue.");
+    }
   }, [])
 
 
   return (
     <section className="page home-page">
+
+      {message && <div className="alert alert-info" role="alert">{message}</div>}
+
       {configs.map((config, index) =>
         (
           <div key={index} className="list-item">

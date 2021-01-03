@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import Modal from "react-modal";
+import { useHistory } from 'react-router-dom'
 import {logInUser} from "../../api/api";
 import {useDispatch, useSelector} from "react-redux";
 import LogInForm from './components/LogInForm';
@@ -24,6 +25,7 @@ const modalStyles = {
 Modal.setAppElement('#root');
 
 const LogInPage = () => {
+  const history = useHistory();
   const dispatch = useDispatch();
   const logInOpen = useSelector(state => state.modal.logInOpen);
   const [error, setError] = useState(null);
@@ -33,6 +35,7 @@ const LogInPage = () => {
     dispatch({type: LOG_IN_CLOSE});
     setError(null);
     setIsSuccess(false);
+    history.go(0);
   }
 
   const handleSubmit = (user) => {

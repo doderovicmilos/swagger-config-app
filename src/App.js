@@ -36,7 +36,7 @@ function App() {
             <Route path='/sign-up'>
               <SignUpPage />
             </Route>
-            <Route path='/config/:name' children={<Config />}/>
+            <Route path='/config/:configName' children={<Config />}/>
             {/*<Route path='/person/:id' children={<Person />}></Route>*/}
             {/*<Route path='*'>*/}
             {/*  <Error />*/}

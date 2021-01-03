@@ -7,28 +7,14 @@ import PasteIcon from "../../components/Icons/PasteIcon";
 import TrashIcon from "../../components/Icons/TrashIcon";
 import CopyIcon from "../../components/Icons/CopyIcon";
 import extractSegment from "./utils/extractSegment";
-
+import useConfig from "./useConfig";
 
 const ConfigPage = (props) => {
     const parsedUrl = new URL(window.location.href);
-    const { name } = useParams();
-    const version = parsedUrl.searchParams.get("version");
-    const [configString, setConfigString] = useState('');
-    const [extractedConfigString, setExtractedConfigString] = useState(null);
+    const { configName } = useParams();
+    const configVersion = parsedUrl.searchParams.get("version");
     const textAreaRef = useRef(null);
-    const [numberOfRows, setNumberOfRows] = useState(1);
-
-  useEffect(()=>{
-    getConfig(name, version).then(response=>response.json())
-      .then(response=> setConfigString(JSON.stringify(response, undefined, 3)))
-      .catch(error=>console.error(error));
-    }, []);
-
-  useEffect(()=>{
-
-    setNumberOfRows(configString.split("\n").length);
-
-  }, [configString]);
+    const {configString, setConfigString, extractedConfigString, setExtractedConfigString, numberOfRows, setNumberOfRows, allowedActions, setAllowedActions} = useConfig(configName, configVersion);
 
   const handleTextChange = (e) => {
     e.preventDefault();
@@ -54,28 +40,23 @@ const ConfigPage = (props) => {
 
   const handleCopyClick = (e) => {
     const lineNumber = parseInt(e.target.parentNode.getAttribute('value'));
-
     setExtractedConfigString(extractSegment(configString, lineNumber)['extractedSegment']);
-    //setConfigString(formatConfig(extractSegment(configString, lineNumber)['newConfigValue']));
   };
 
   const handleCutClick = (e) => {
     const lineNumber = parseInt(e.target.parentNode.getAttribute('value'));
-
     setExtractedConfigString(extractSegment(configString, lineNumber)['extractedSegment']);
     setConfigString(formatConfig(extractSegment(configString, lineNumber)['newConfigValue']));
   };
 
   const handleDeleteClick = (e) => {
     const lineNumber = parseInt(e.target.parentNode.getAttribute('value'));
-
     setConfigString(formatConfig(extractSegment(configString, lineNumber)['newConfigValue']));
   };
 
   const handlePasteClick = (e) => {
     const lines = textAreaRef.current.value.split("\n");
     const clickedLineNumber = parseInt(e.target.parentNode.getAttribute("value"));
-    console.log(lines[clickedLineNumber + 1].trim());
     const lineToInsert = lines[clickedLineNumber + 1].trim().charAt(0) === '}' || lines[clickedLineNumber + 1].trim().charAt(0) === ']' ? ',' + extractedConfigString : extractedConfigString + ',';
     lines.splice(clickedLineNumber + 1, 0, lineToInsert);
     const newValueString = lines.join("\n");
@@ -84,26 +65,6 @@ const ConfigPage = (props) => {
     setConfigString(formatConfig(newValueString));
   }
 
-  const enableCut = (index) => {
-    const lines = configString.split('\n');
-    //clipboard is empty and attribute is named
-    return extractedConfigString === null && ( lines[index] && lines[index].match(/"(.*?)":/) || lines[index] && lines[index].trim() === '{' );
-  }
-
-  const enablePaste = (index) => {
-    const lines = configString.split('\n');
-    //                                     start of array                    middle of array                  end of array
-    const insideArray = lines[index+1] && (lines[index].slice(-1) === '[' || lines[index+1].trim() === '{' || lines[index+1].trim() === ']');
-
-    //if extracted segment is unnamed
-    if  (extractedConfigString && extractedConfigString.split('\n') && extractedConfigString.split('\n')[0] && extractedConfigString.split('\n')[0].trim() === '{') return insideArray;
-
-    //if extracted segment is named
-    else return extractedConfigString && !insideArray;
-  }
-
-
-
   return (
     <section className="page config-page">
 
@@ -111,42 +72,33 @@ const ConfigPage = (props) => {
         <div className="input-group-prepend">
           <span className="input-group-text">
             {
-              [...Array(numberOfRows)].map(
+              [allowedActions.map(
                 (it, index) => (
                   <div key={index} value={index}>
-
-
-                    { enableCut(index) && <button className="btn btn-outline-primary btn-sm"
+                    { it.copy && <button className="btn btn-outline-primary btn-sm"
                                                   onClick={handleCopyClick}
                     >
                       <CopyIcon />
                     </button> }
-
-
-                    { enableCut(index) && <button className="btn btn-outline-primary btn-sm"
+                    { it.cut && <button className="btn btn-outline-primary btn-sm"
                             onClick={handleCutClick}
                     >
                       <CutIcon/>
                     </button> }
-
-
-
-                    { enablePaste(index) && <button className="btn btn-outline-primary btn-sm"
+                    { it.paste && <button className="btn btn-outline-primary btn-sm"
                       onClick={handlePasteClick}
                     >
                       <PasteIcon  />
                     </button>}
-
-                    { enableCut(index) && <button className="btn btn-outline-danger btn-sm"
+                    { it.del && <button className="btn btn-outline-danger btn-sm"
                       onClick={handleDeleteClick}
                     >
                       <TrashIcon />
                     </button> }
-
                     <span>{index}</span>
                   </div>
                 )
-              )
+              )]
             }
           </span>
         </div>

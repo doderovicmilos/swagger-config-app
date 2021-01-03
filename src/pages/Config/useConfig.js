@@ -20,7 +20,7 @@ const useConfig = (configName, configVersion) => {
 
   const enablePaste = (lines, index) => {
     //                                     start of array                    middle of array                  end of array
-    const insideArray = lines[index+1] && (lines[index].slice(-1) === '[' || lines[index+1].trim() === '{' || lines[index+1].trim() === ']');
+    const insideArray = lines[index+1] && (lines[index].slice(-1) === '[' || lines[index+1].trim() === '{' || lines[index+1].trim() === ']' || lines[index].match(/: \[\]/) );
     //if extracted segment is unnamed
     if  (extractedConfigString && extractedConfigString.split('\n') && extractedConfigString.split('\n')[0] && extractedConfigString.split('\n')[0].trim() === '{') return insideArray;
     //if extracted segment is named
@@ -48,7 +48,7 @@ const useConfig = (configName, configVersion) => {
 
         return allowedActions;
       }))
-  }, [configString]);
+  }, [configString, extractedConfigString]);
 
 
 

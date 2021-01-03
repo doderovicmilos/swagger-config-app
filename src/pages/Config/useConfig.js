@@ -1,5 +1,5 @@
-import React, {useState, useRef, useEffect, useCallback} from 'react';
-import {getConfig, saveConfig} from "../../api/api";
+import {useState, useEffect} from 'react';
+import {getConfig} from "../../api/api";
 
 const useConfig = (configName, configVersion) => {
 
@@ -8,13 +8,15 @@ const useConfig = (configName, configVersion) => {
   const [numberOfRows, setNumberOfRows] = useState(1);
   const [allowedActions, setAllowedActions] = useState([]);
 
-  const enableCutCopy = (lines, index) => {
-    //clipboard is empty and attribute is named
-    return extractedConfigString === null && ( lines[index] && lines[index].match(/"(.*?)":/) || lines[index] && lines[index].trim() === '{' );
-  }
+  useEffect(()=>{
+    getConfig(configName, configVersion).then(response=>response.json())
+      .then(response=> setConfigString(JSON.stringify(response.data, undefined, 2)))
+      .catch(error=>console.error(error));
+  }, []);
 
-  const enableDelete = (lines, index) => {
+  const enableCutCopyDelete = (lines, index) => {
     //clipboard is empty and attribute is named
+    //extractedConfigString === null &&
     return lines[index] && lines[index].match(/"(.*?)":/) || lines[index] && lines[index].trim() === '{' ;
   }
 
@@ -28,12 +30,6 @@ const useConfig = (configName, configVersion) => {
   }
 
   useEffect(()=>{
-    getConfig(configName, configVersion).then(response=>response.json())
-      .then(response=> setConfigString(JSON.stringify(response, undefined, 3)))
-      .catch(error=>console.error(error));
-  }, []);
-
-  useEffect(()=>{
     const lines = configString.split("\n")
     setNumberOfRows(lines.length);
 
@@ -41,10 +37,10 @@ const useConfig = (configName, configVersion) => {
       (it, index) => {
         const allowedActions  = { cut: false, copy: false, paste: false, del:false }
 
-        allowedActions.cut = enableCutCopy(lines, index);
-        allowedActions.copy = enableCutCopy(lines, index);
+        allowedActions.cut = enableCutCopyDelete(lines, index);
+        allowedActions.copy = enableCutCopyDelete(lines, index);
         allowedActions.paste = enablePaste(lines, index);
-        allowedActions.del = enableDelete(lines, index);
+        allowedActions.del = enableCutCopyDelete(lines, index);
 
         return allowedActions;
       }))

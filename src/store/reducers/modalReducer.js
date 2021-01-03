@@ -1,3 +1,5 @@
+import { SIGN_UP_OPEN, SIGN_UP_CLOSE, LOG_IN_OPEN, LOG_IN_CLOSE } from '../types'
+
 export const initialState = {
   signUpOpen: false,
   logInOpen: false
@@ -35,13 +37,13 @@ function logInClose(state, action) {
 
 export default function reducer(state = initialState, action) {
   switch (action.type) {
-    case "SIGN_UP_OPEN":
+    case SIGN_UP_OPEN:
       return signUpOpen(state, action);
-    case "SIGN_UP_CLOSE":
+    case SIGN_UP_CLOSE:
       return signUpClose(state, action);
-    case "LOG_IN_OPEN":
+    case LOG_IN_OPEN:
       return logInOpen(state, action);
-    case "LOG_IN_CLOSE":
+    case LOG_IN_CLOSE:
       return logInClose(state, action);
     default:
       return state;

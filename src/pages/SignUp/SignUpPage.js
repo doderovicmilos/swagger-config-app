@@ -1,10 +1,10 @@
-import React, {useState, useEffect} from 'react';
-import {useHistory} from "react-router-dom";
+import React, {useState} from 'react';
 import {registerUser} from "../../api/api";
 import Modal from "react-modal";
 import {useDispatch, useSelector} from "react-redux";
 import SignUpForm from "./components/SignUpForm";
 import './signUp.scss';
+import { SIGN_UP_CLOSE } from "../../store/types";
 
 const modalStyles = {
   content: {
@@ -22,7 +22,7 @@ const modalStyles = {
   }
 };
 
-Modal.setAppElement('#root')
+Modal.setAppElement('#root');
 
 const SignUpPage = () => {
   const dispatch = useDispatch();
@@ -54,19 +54,16 @@ const SignUpPage = () => {
   };
 
   const onModalClose = () => {
-    dispatch({type: "SIGN_UP_CLOSE"});
+    dispatch({type: SIGN_UP_CLOSE});
     setError(null);
     setIsSuccess(false);
   }
 
   return (
-
       <Modal
         isOpen={signUpOpen}
-        //onAfterOpen={afterOpenModal}
         onRequestClose={onModalClose}
         style={modalStyles}
-        contentLabel="Example Modal"
       >
         {
           error
@@ -80,7 +77,6 @@ const SignUpPage = () => {
               <SignUpForm onSubmit={handleSubmit}/>
           }
       </Modal>
-
   );
 };
 

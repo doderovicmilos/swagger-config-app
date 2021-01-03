@@ -1,6 +1,8 @@
+const url =  'https://l5ov8zep98.execute-api.us-west-2.amazonaws.com/api';
+
 export const registerUser = async (user) => {
   return fetch(
-    'https://l5ov8zep98.execute-api.us-west-2.amazonaws.com/api/register',
+    `${url}/register`,
     {
       method: 'post',
       headers: {
@@ -12,7 +14,7 @@ export const registerUser = async (user) => {
 
 export const logInUser = async (user) => {
   return fetch(
-    'https://l5ov8zep98.execute-api.us-west-2.amazonaws.com/api/login',
+    `${url}/login`,
     {
       method: 'post',
       headers: {
@@ -26,7 +28,7 @@ export const logInUser = async (user) => {
 export const getConfigs = async () => {
   const token = localStorage.getItem('swaggerApiToken');
   return fetch(
-    'https://l5ov8zep98.execute-api.us-west-2.amazonaws.com/api/config',
+    `${url}/config`,
     {
       method: 'get',
       headers: {
@@ -39,21 +41,20 @@ export const getConfigs = async () => {
 export const getConfig = async (name, version) => {
   const token = localStorage.getItem('swaggerApiToken');
   return fetch(
-    `https://l5ov8zep98.execute-api.us-west-2.amazonaws.com/api/config/${name}?version=${version}`,
+    `${url}/config/${name}?version=${version}`,
     {
       method: 'get',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': token
       }
-      //body: JSON.stringify({})
     });
 };
 
 export const saveConfig = async (config) => {
   const token = localStorage.getItem('swaggerApiToken');
   return fetch(
-    'https://l5ov8zep98.execute-api.us-west-2.amazonaws.com/api/config',
+    `${url}/config`,
     {
       method: 'post',
       headers: {

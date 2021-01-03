@@ -1,26 +1,52 @@
-.config-page{
+.config-page {
 
+  .name-version-input {
+    margin-top: 15px;
 
-  .input-group{
+    label {
+      margin-right: 18px;
+    }
+
+    input {
+      max-height: 26px;
+      text-align: center;
+      border-radius: 2px;
+    }
+
+    #name {
+      max-width: 240px;
+    }
+
+    #version {
+      max-width: 80px;
+    }
+  }
+
+  .config-input {
+    margin-top: 15px;
     font-family: "Courier New", monospace;
-    .input-group-prepend{
-      .input-group-text{
+
+    .input-group-prepend {
+      .input-group-text {
         flex-direction: column;
         padding-bottom: 23px;
         border-top-right-radius: 0;
         border-bottom-right-radius: 0;
-        span{
-          width:30px;
+
+        span {
+          width: 30px;
           display: inline-block;
           pointer-events: none;
         }
-        button{
+
+        button {
           margin: 0;
           padding: 0;
           font-size: 1em;
           line-height: initial;
-          .bi-cissors{
-            svg{
+
+          .bi-cissors {
+            svg {
               width: 0.8em;
               height: 0.8em;
               vertical-align: -2px;
@@ -28,27 +54,37 @@
             }
           }
         }
-        button:disabled{
+
+        button:disabled {
           opacity: .2;
         }
 
       }
     }
-    textarea{
+
+    textarea {
       overflow-x: auto;
       resize: none;
     }
   }
 
-
-
-  .button-container{
-    margin-top: 10px;
-    display: flex;
-    justify-content: space-evenly;
+  .alert {
+    margin-top: 15px;
   }
 
-  .index-column{
+  .button-container {
+    margin-top: 15px;
+    margin-bottom: 50px;
+    display: flex;
+    justify-content: flex-end;
+
+    button {
+      margin-left: 15px;
+    }
+
+  }
+
+  .index-column {
 
     display: inline;
 
